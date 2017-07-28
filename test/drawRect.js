@@ -28,6 +28,14 @@ describe('drawRect', function() {
 		assert.deepEqual(imageBuffer, canvas.data);
 	});
 
+	it('should draw two overlapping black squares', function() {
+		let imageBuffer = PNG.sync.read(fs.readFileSync('./test/images/overlapping_squares_2.png')).data;
+		canvas = funPaint.drawRect(canvas, 0, 0, 16, 16, [255, 255, 255, 0]);
+		canvas = funPaint.drawRect(canvas, 4, 4, 8, 8, [0, 0, 0, 255]);
+		canvas = funPaint.drawRect(canvas, 8, 8, 8, 8, [0, 0, 0, 255]);
+		assert.deepEqual(imageBuffer, canvas.data);
+	});
+
 	it('should draw red green and blue squares', function() {
 		let imageBuffer = PNG.sync.read(fs.readFileSync('./test/images/rgb_squares.png')).data;
 		canvas = funPaint.drawRect(canvas, 0, 0, 16, 16, [255, 255, 255, 0]);

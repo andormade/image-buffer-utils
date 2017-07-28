@@ -1,5 +1,5 @@
 import {getChannelCount, bytePosition2Coordinates, coordinates2bytePosition,
-	forEachPixel, forEachByte} from './utils.js';
+	forEachPixel, forEachByte, mergeColors, mergeAlpha, isDefined} from './utils.js';
 import {CHANNEL_RED, CHANNEL_GREEN, CHANNEL_BLUE, CHANNEL_ALPHA,
 	RGB, RGBA} from './constants.js';
 
@@ -73,6 +73,10 @@ export function drawPixel(
 		workingCanvas.data[bytePos + CHANNEL_BLUE]
 	] = color;
 
+	if (color[CHANNEL_ALPHA] && canvas.hasAlphaChannel) {
+		workingCanvas.data[bytePos + CHANNEL_ALPHA] = color[CHANNEL_ALPHA];
+	}
+
 	return workingCanvas;
 }
 
@@ -95,9 +99,14 @@ export function drawRect(
 			[
 				workingCanvas.data[bytePos + CHANNEL_RED],
 				workingCanvas.data[bytePos + CHANNEL_GREEN],
-				workingCanvas.data[bytePos + CHANNEL_BLUE],
-				workingCanvas.data[bytePos + CHANNEL_ALPHA]
+				workingCanvas.data[bytePos + CHANNEL_BLUE]
 			] = color;
+
+			if (canvas.hasAlphaChannel) {
+				workingCanvas.data[bytePos + CHANNEL_ALPHA] =
+					isDefined(color[CHANNEL_ALPHA]) ?
+						color[CHANNEL_ALPHA] : 0xff;
+			}
  		}
 	}
 
@@ -116,28 +125,35 @@ export function drawCanvas(
 	let workingCanvas = cloneCanvas(destination);
 
 	forEachPixel(source, (x, y, bytePos) => {
+		let destBytePos = coordinates2bytePosition(destination, x + offsetX, y + offsetY);
+
 		if (typeof destination.data[destBytePos] === 'undefined') {
 			return;
 		}
-
-		let destBytePos = coordinates2bytePosition(x + offsetX, y + offsetY);
 
 		[
 			workingCanvas.data[destBytePos + CHANNEL_RED],
 			workingCanvas.data[destBytePos + CHANNEL_GREEN],
 			workingCanvas.data[destBytePos + CHANNEL_BLUE]
-		] = [
+		] = mergeColors([
+			destination.data[destBytePos + CHANNEL_RED],
+			destination.data[destBytePos + CHANNEL_GREEN],
+			destination.data[destBytePos + CHANNEL_BLUE],
+			destination.hasAlphaChannel ?
+				destination.data[destBytePos + CHANNEL_ALPHA] : 0xff
+		], [
 			source.data[bytePos + CHANNEL_RED],
 			source.data[bytePos + CHANNEL_GREEN],
-			source.data[bytePos + CHANNEL_BLUE]
-		]
+			source.data[bytePos + CHANNEL_BLUE],
+			source.hasAlphaChannel ?
+				source.data[destBytePos + CHANNEL_ALPHA] : 0xff
+		]);
 
-		if (source.hasAlphaChannel && destination.hasAlphaChannel) {
-			workingCanvas.data[destBytePos + CHANNEL_ALPHA] =
-				source.data[bytePos + CHANNEL_ALPHA];
-		}
-		else if (!source.hasAlphaChannel && destination.hasAlphaChannel) {
-			workingCanvas.data[destBytePos + CHANNEL_ALPHA] = 0xff;
+		if (destination.hasAlphaChannel && source.hasAlphaChannel) {
+			workingCanvas.data[destBytePos + CHANNEL_ALPHA] = mergeAlpha(
+				destination.data[destBytePos + CHANNEL_ALPHA],
+				source.data[bytePos + CHANNEL_ALPHA]
+			);
 		}
 	});
 
