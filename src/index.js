@@ -1,46 +1,7 @@
-const CHANNEL_RED = 0;
-const CHANNEL_GREEN = 1;
-const CHANNEL_BLUE = 2;
-const CHANNEL_ALPHA = 3;
-const RGB = 3;
-const RGBA = 4;
-
-type Canvas = {
-	data: array,
-	hasAlphaChannel: boolean,
-	height: number,
-	width: number
-};
-
-function getChannelCount(canvas: Canvas): number {
-	return canvas.hasAlphaChannel ? RGBA : RGB;
-}
-
-function bytePosition2Coordinates(canvas: Canvas, pos: number): array {
-	let byteWidth = canvas.width * getChannelCount(canvas);
-	return [
-		Math.floor(pos / byteWidth),
-		pos % byteWidth / getChannelCount(canvas)
-	];
-}
-
-function coordinates2bytePosition(canvas: Canvas, x: number, y: number): number {
-	return y * canvas.width * getChannelCount(canvas) + x;
-}
-
-function forEachPixel(canvas: Canvas, callback: mixed): void {
-	for (let bytePos = 0; bytePos < canvas.data.length; bytePos += getChannelCount(canvas)) {
-		let [x, y] = bytePosition2Coordinates(canvas, bytePos);
-		callback(x, y, bytePos);
-	}
-}
-
-function forEachByte(canvas: Canvas, callback: mixed): void {
-	for (let bytePos = 0; bytePos < canvas.data.length; bytePos++) {
-		let [x, y] = bytePosition2Coordinates(canvas, bytePos);
-		callback(x, y, bytePos);
-	}
-}
+import {getChannelCount, bytePosition2Coordinates, coordinates2bytePosition,
+	forEachPixel, forEachByte} from './utils.js';
+import {CHANNEL_RED, CHANNEL_GREEN, CHANNEL_BLUE, CHANNEL_ALPHA,
+	RGB, RGBA} from './constants.js';
 
 /**
  * Creates a new empty canvas.
@@ -97,7 +58,12 @@ export function isEqualColor(color1: array, color2: array): boolean {
 /**
  * Sets one pixels color on the canvas.
  */
-export function drawPixel(canvas: Canvas, x: number, y: number, color: array): Canvas {
+export function drawPixel(
+	canvas: Canvas,
+	x: number,
+	y: number,
+	color: array
+): Canvas {
 	let workingCanvas = cloneCanvas(canvas),
 		bytePos = coordinates2bytePosition(canvas, x, y);
 
@@ -155,15 +121,22 @@ export function drawCanvas(
 
 		let destBytePos = coordinates2bytePosition(x + offsetX, y + offsetY);
 
-		workingCanvas.data[destBytePos + CHANNEL_RED] = source.data[bytePos + CHANNEL_RED];
-		workingCanvas.data[destBytePos + CHANNEL_GREEN] = source.data[bytePos + CHANNEL_GREEN];
-		workingCanvas.data[destBytePos + CHANNEL_BLUE] = source.data[bytePos + CHANNEL_BLUE];
+		[
+			workingCanvas.data[destBytePos + CHANNEL_RED],
+			workingCanvas.data[destBytePos + CHANNEL_GREEN],
+			workingCanvas.data[destBytePos + CHANNEL_BLUE]
+		] = [
+			source.data[bytePos + CHANNEL_RED],
+			source.data[bytePos + CHANNEL_GREEN],
+			source.data[bytePos + CHANNEL_BLUE]
+		]
 
 		if (source.hasAlphaChannel && destination.hasAlphaChannel) {
-			newCanvas.data[destBytePos + CHANNEL_ALPHA] = source.data[bytePos + CHANNEL_ALPHA];
+			workingCanvas.data[destBytePos + CHANNEL_ALPHA] =
+				source.data[bytePos + CHANNEL_ALPHA];
 		}
 		else if (!source.hasAlphaChannel && destination.hasAlphaChannel) {
-			newCanvas.data[destBytePos + CHANNEL_ALPHA] = 0xff;
+			workingCanvas.data[destBytePos + CHANNEL_ALPHA] = 0xff;
 		}
 	});
 
@@ -173,7 +146,11 @@ export function drawCanvas(
 /**
  * Replaces the specified color on the canvas.
  */
-export function replaceColor(canvas: Canvas, replacee: array, replacer: array): Canvas {
+export function replaceColor(
+	canvas: Canvas,
+	replacee: array,
+	replacer: array
+): Canvas {
 	let workingCanvas = cloneCanvas(canvas);
 
 	forEachPixel(canvas, (x, y, bytePos) => {
