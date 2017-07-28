@@ -27,7 +27,7 @@ export function createCanvas(
 export function createCanvasFromImageBuffer(
 	imageBuffer: array,
 	width: number,
-	height: number,
+	height: number = imageBuffer / (width * 4),
 	hasAlphaChannel: boolean = true
 ): Canvas {
 	let canvas = createCanvas(width, height, hasAlphaChannel);
@@ -40,7 +40,7 @@ export function createCanvasFromImageBuffer(
  */
 export function cloneCanvas(canvas: Canvas): Canvas {
 	return createCanvasFromImageBuffer(
-		[...canvas.data], canvas.width, canvas.height, canvas.hasAlphaChannel
+		canvas.data, canvas.width, canvas.height, canvas.hasAlphaChannel
 	);
 }
 
@@ -95,7 +95,8 @@ export function drawRect(
 			[
 				workingCanvas.data[bytePos + CHANNEL_RED],
 				workingCanvas.data[bytePos + CHANNEL_GREEN],
-				workingCanvas.data[bytePos + CHANNEL_BLUE]
+				workingCanvas.data[bytePos + CHANNEL_BLUE],
+				workingCanvas.data[bytePos + CHANNEL_ALPHA]
 			] = color;
  		}
 	}

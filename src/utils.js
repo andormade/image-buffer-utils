@@ -18,7 +18,7 @@ export function coordinates2bytePosition(
 	x: number,
 	y: number
 ): number {
-	return y * canvas.width * getChannelCount(canvas) + x;
+	return (y * canvas.width + x) * getChannelCount(canvas);
 }
 
 export function forEachPixel(canvas: Canvas, callback: mixed): void {
