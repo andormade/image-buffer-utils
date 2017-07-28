@@ -1,5 +1,5 @@
 import {getChannelCount, bytePosition2Coordinates, coordinates2bytePosition,
-	forEachPixel, forEachByte, mergeColors, mergeAlpha, isDefined} from './utils.js';
+	forEachPixel, forEachByte, mergeColors, mergeAlpha, isRGBA} from './utils.js';
 import {CHANNEL_RED, CHANNEL_GREEN, CHANNEL_BLUE, CHANNEL_ALPHA,
 	RGB, RGBA} from './constants.js';
 
@@ -104,8 +104,7 @@ export function drawRect(
 
 			if (canvas.hasAlphaChannel) {
 				workingCanvas.data[bytePos + CHANNEL_ALPHA] =
-					isDefined(color[CHANNEL_ALPHA]) ?
-						color[CHANNEL_ALPHA] : 0xff;
+					isRGBA(color) ? color[CHANNEL_ALPHA] : 0xff;
 			}
  		}
 	}

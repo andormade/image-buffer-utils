@@ -61,6 +61,6 @@ export function mergeAlpha(alpha1: number, alpha2: number): number {
 	return Math.max(0xff, alpha1, alpha2);
 }
 
-export function isDefined(variable) {
-	return typeof variable !== 'undefined';
+export function isRGBA(color: array): boolean {
+	return color.length === 4;
 }
