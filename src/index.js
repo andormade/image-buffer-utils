@@ -5,11 +5,18 @@ const CHANNEL_ALPHA = 3;
 const RGB = 3;
 const RGBA = 4;
 
-function getChannelCount(canvas) {
+type Canvas = {
+	data: array,
+	hasAlphaChannel: boolean,
+	height: number,
+	width: number
+};
+
+function getChannelCount(canvas: Canvas): number {
 	return canvas.hasAlphaChannel ? RGBA : RGB;
 }
 
-function bytePosition2Coordinates(canvas, pos) {
+function bytePosition2Coordinates(canvas: Canvas, pos: number): array {
 	let byteWidth = canvas.width * getChannelCount(canvas);
 	return [
 		Math.floor(pos / byteWidth),
@@ -17,48 +24,69 @@ function bytePosition2Coordinates(canvas, pos) {
 	];
 }
 
-function coordinates2bytePosition(canvas, x, y) {
+function coordinates2bytePosition(canvas: Canvas, x: number, y: number): number {
 	return y * canvas.width * getChannelCount(canvas) + x;
 }
 
-function forEachPixel(canvas, callback) {
+function forEachPixel(canvas: Canvas, callback: mixed): void {
 	for (let bytePos = 0; bytePos < canvas.data.length; bytePos += getChannelCount(canvas)) {
 		let [x, y] = bytePosition2Coordinates(canvas, bytePos);
 		callback(x, y, bytePos);
 	}
 }
 
-function forEachByte(canvas, callback) {
+function forEachByte(canvas: Canvas, callback: mixed): void {
 	for (let bytePos = 0; bytePos < canvas.data.length; bytePos++) {
 		let [x, y] = bytePosition2Coordinates(canvas, bytePos);
 		callback(x, y, bytePos);
 	}
 }
 
-export function createCanvas(width, height, hasAlphaChannel = true) {
+/**
+ * Creates a new empty canvas.
+ */
+export function createCanvas(
+	width: number,
+	height: number,
+	hasAlphaChannel: boolean = true
+): Canvas {
 	let channels = hasAlphaChannel ? RGBA : RGB;
 
 	return {
 		width           : width,
 		height          : height,
 		hasAlphaChannel : hasAlphaChannel,
-		data            : new Uint8Array(width * height * channels).fill(0)
+		data            : new Uint8Array(width * height * channels).fill(0x00)
 	};
 }
 
-export function createCanvasFromImageBuffer(imageBuffer, width, height, hasAlphaChannel = true) {
+/**
+ * Creates a new canvas object from an image buffer.
+ */
+export function createCanvasFromImageBuffer(
+	imageBuffer: array,
+	width: number,
+	height: number,
+	hasAlphaChannel: boolean = true
+): Canvas {
 	let canvas = createCanvas(width, height, hasAlphaChannel);
 	canvas.data = [...imageBuffer];
 	return canvas;
 }
 
-export function cloneCanvas(canvas) {
+/**
+ * Clones the canvas object.
+ */
+export function cloneCanvas(canvas: Canvas): Canvas {
 	return createCanvasFromImageBuffer(
 		[...canvas.data], canvas.width, canvas.height, canvas.hasAlphaChannel
 	);
 }
 
-export function isEqualColor(color1, color2) {
+/**
+ * Compares two colors.
+ */
+export function isEqualColor(color1: array, color2: array): boolean {
 	return (
 		color1[CHANNEL_RED] === color2[CHANNEL_RED] &&
 		color1[CHANNEL_GREEN] === color2[CHANNEL_GREEN] &&
@@ -66,7 +94,10 @@ export function isEqualColor(color1, color2) {
 	);
 }
 
-export function drawPixel(canvas, x, y, color) {
+/**
+ * Sets one pixels color on the canvas.
+ */
+export function drawPixel(canvas: Canvas, x: number, y: number, color: array): Canvas {
 	let workingCanvas = cloneCanvas(canvas),
 		bytePos = coordinates2bytePosition(canvas, x, y);
 
@@ -79,7 +110,17 @@ export function drawPixel(canvas, x, y, color) {
 	return workingCanvas;
 }
 
-export function drawRect(canvas, x, y, width, height, color) {
+/**
+ * Draws a rectangle.
+ */
+export function drawRect(
+	canvas: Canvas,
+	x: number,
+	y: number,
+	width: number,
+	height: number,
+	color: array
+): Canvas {
 	let workingCanvas = cloneCanvas(canvas);
 
 	for (let i = x; i < x + width; i++) {
@@ -96,7 +137,15 @@ export function drawRect(canvas, x, y, width, height, color) {
 	return workingCanvas;
 }
 
-export function drawCanvas(destination, source, offsetX, offsetY) {
+/**
+ * Draws a canvas on another canvas.
+ */
+export function drawCanvas(
+	destination: Canvas,
+	source: Canvas,
+	offsetX: number,
+	offsetY: number
+): Canvas {
 	let workingCanvas = cloneCanvas(destination);
 
 	forEachPixel(source, (x, y, bytePos) => {
@@ -121,7 +170,10 @@ export function drawCanvas(destination, source, offsetX, offsetY) {
 	return workingCanvas;
 }
 
-export function replaceColor(canvas, replacee, replacer) {
+/**
+ * Replaces the specified color on the canvas.
+ */
+export function replaceColor(canvas: Canvas, replacee: array, replacer: array): Canvas {
 	let workingCanvas = cloneCanvas(canvas);
 
 	forEachPixel(canvas, (x, y, bytePos) => {
@@ -137,7 +189,10 @@ export function replaceColor(canvas, replacee, replacer) {
 	return workingCanvas;
 }
 
-export function getColor(canvas, x, y) {
+/**
+ * Returns with the color of the specified coordinates.
+ */
+export function getColor(canvas: Canvas, x: number, y: number): array {
 	let bytePos = coordinates2bytePosition(canvas, x, y),
 		color = [
 			canvas.data[bytePos + CHANNEL_RED],
