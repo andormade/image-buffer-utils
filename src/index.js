@@ -58,48 +58,57 @@ export function cloneCanvas(canvas) {
 	);
 }
 
+export function isEqualColor(color1, color2) {
+	return (
+		color1[CHANNEL_RED] === color2[CHANNEL_RED] &&
+		color1[CHANNEL_GREEN] === color2[CHANNEL_GREEN] &&
+		color1[CHANNEL_BLUE] === color2[CHANNEL_BLUE]
+	);
+}
+
 export function drawPixel(canvas, x, y, color) {
-	let [red, green, blue, alpha] = color,
-		newCanvas = cloneCanvas(canvas),
+	let workingCanvas = cloneCanvas(canvas),
 		bytePos = coordinates2bytePosition(canvas, x, y);
 
-	newCanvas.data[bytePos + CHANNEL_RED] = red;
-	newCanvas.data[bytePos + CHANNEL_GREEN] = green;
-	newCanvas.data[bytePos + CHANNEL_BLUE] = blue;
+	[
+		workingCanvas.data[bytePos + CHANNEL_RED],
+		workingCanvas.data[bytePos + CHANNEL_GREEN],
+		workingCanvas.data[bytePos + CHANNEL_BLUE]
+	] = color;
 
-	return newCanvas;
+	return workingCanvas;
 }
 
 export function drawRect(canvas, x, y, width, height, color) {
-	let [red, green, blue, alpha] = color;
-
-	let newCanvas = cloneCanvas(canvas);
+	let workingCanvas = cloneCanvas(canvas);
 
 	for (let i = x; i < x + width; i++) {
 		for (let j = y; j < y + height; j++) {
 			let bytePos = coordinates2bytePosition(canvas, i, j);
-			newCanvas.data[bytePos + CHANNEL_RED] = red;
-			newCanvas.data[bytePos + CHANNEL_GREEN] = green;
-			newCanvas.data[bytePos + CHANNEL_BLUE] = blue;
+			[
+				workingCanvas.data[bytePos + CHANNEL_RED],
+				workingCanvas.data[bytePos + CHANNEL_GREEN],
+				workingCanvas.data[bytePos + CHANNEL_BLUE]
+			] = color;
  		}
 	}
 
-	return newCanvas;
+	return workingCanvas;
 }
 
 export function drawCanvas(destination, source, offsetX, offsetY) {
-	let newCanvas = cloneCanvas(destination);
+	let workingCanvas = cloneCanvas(destination);
 
 	forEachPixel(source, (x, y, bytePos) => {
-		if (typeof newCanvas.data[destBytePos] === 'undefined') {
+		if (typeof destination.data[destBytePos] === 'undefined') {
 			return;
 		}
 
 		let destBytePos = coordinates2bytePosition(x + offsetX, y + offsetY);
 
-		newCanvas.data[destBytePos + CHANNEL_RED] = source.data[bytePos + CHANNEL_RED];
-		newCanvas.data[destBytePos + CHANNEL_GREEN] = source.data[bytePos + CHANNEL_GREEN];
-		newCanvas.data[destBytePos + CHANNEL_BLUE] = source.data[bytePos + CHANNEL_BLUE];
+		workingCanvas.data[destBytePos + CHANNEL_RED] = source.data[bytePos + CHANNEL_RED];
+		workingCanvas.data[destBytePos + CHANNEL_GREEN] = source.data[bytePos + CHANNEL_GREEN];
+		workingCanvas.data[destBytePos + CHANNEL_BLUE] = source.data[bytePos + CHANNEL_BLUE];
 
 		if (source.hasAlphaChannel && destination.hasAlphaChannel) {
 			newCanvas.data[destBytePos + CHANNEL_ALPHA] = source.data[bytePos + CHANNEL_ALPHA];
@@ -109,25 +118,23 @@ export function drawCanvas(destination, source, offsetX, offsetY) {
 		}
 	});
 
-	return newCanvas;
+	return workingCanvas;
 }
 
 export function replaceColor(canvas, replacee, replacer) {
-	let newCanvas = cloneCanvas(destination);
+	let workingCanvas = cloneCanvas(canvas);
 
-	forEachPixel(newCanvas, (x, y, bytePos) => {
-		if (
-			newCanvas.data[bytePos + CHANNEL_RED] === replacee[CHANNEL_RED] &&
-			newCanvas.data[bytePos + CHANNEL_GREEN] === replacee[CHANNEL_GREEN] &&
-			newCanvas.data[bytePos + CHANNEL_BLUE] === replacee[CHANNEL_BLUE]
-		) {
-			newCanvas.data[bytePos + CHANNEL_RED] = replacer[CHANNEL_RED];
-			newCanvas.data[bytePos + CHANNEL_GREEN] = replacer[CHANNEL_GREEN];
-			newCanvas.data[bytePos + CHANNEL_BLUE] = replacer[CHANNEL_BLUE];
+	forEachPixel(canvas, (x, y, bytePos) => {
+		if (isEqualColor(getColor(canvas, x, y), replacee)) {
+			[
+				workingCanvas.data[bytePos + CHANNEL_RED],
+				workingCanvas.data[bytePos + CHANNEL_GREEN],
+				workingCanvas.data[bytePos + CHANNEL_BLUE]
+			] = replacer;
 		}
 	});
 
-	return newCanvas;
+	return workingCanvas;
 }
 
 export function getColor(canvas, x, y) {
