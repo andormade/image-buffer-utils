@@ -1,5 +1,6 @@
 import {getChannelCount, bytePosition2Coordinates, coordinates2bytePosition,
-	forEachPixel, forEachByte, mergeColors, mergeAlpha, isRGBA} from './utils.js';
+	forEachPixel, forEachByte, blendColor, blendAlpha,
+	isRGBA} from './utils.js';
 import {CHANNEL_RED, CHANNEL_GREEN, CHANNEL_BLUE, CHANNEL_ALPHA,
 	RGB, RGBA} from './constants.js';
 
@@ -134,22 +135,18 @@ export function drawCanvas(
 			workingCanvas.data[destBytePos + CHANNEL_RED],
 			workingCanvas.data[destBytePos + CHANNEL_GREEN],
 			workingCanvas.data[destBytePos + CHANNEL_BLUE]
-		] = mergeColors([
+		] = blendColor([
 			destination.data[destBytePos + CHANNEL_RED],
 			destination.data[destBytePos + CHANNEL_GREEN],
-			destination.data[destBytePos + CHANNEL_BLUE],
-			destination.hasAlphaChannel ?
-				destination.data[destBytePos + CHANNEL_ALPHA] : 0xff
+			destination.data[destBytePos + CHANNEL_BLUE]
 		], [
 			source.data[bytePos + CHANNEL_RED],
 			source.data[bytePos + CHANNEL_GREEN],
-			source.data[bytePos + CHANNEL_BLUE],
-			source.hasAlphaChannel ?
-				source.data[destBytePos + CHANNEL_ALPHA] : 0xff
+			source.data[bytePos + CHANNEL_BLUE]
 		]);
 
 		if (destination.hasAlphaChannel && source.hasAlphaChannel) {
-			workingCanvas.data[destBytePos + CHANNEL_ALPHA] = mergeAlpha(
+			workingCanvas.data[destBytePos + CHANNEL_ALPHA] = blendAlpha(
 				destination.data[destBytePos + CHANNEL_ALPHA],
 				source.data[bytePos + CHANNEL_ALPHA]
 			);

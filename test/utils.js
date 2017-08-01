@@ -15,3 +15,15 @@ describe('coordinates2bytePosition', function() {
 		assert.deepEqual(utils.coordinates2bytePosition(canvas, 1, 1), 12);
 	});
 });
+
+describe('mergeAlpha', function() {
+	it('should return with 0x00', function() {
+		assert.strictEqual(utils.blendAlpha(0x00, 0x00), 0x00);
+	})
+
+	it('should return with 0xff', function() {
+		assert.strictEqual(utils.blendAlpha(0xff, 0x00), 0xff);
+		assert.strictEqual(utils.blendAlpha(0x00, 0xff), 0xff);
+		assert.strictEqual(utils.blendAlpha(0xff, 0xff), 0xff);
+	})
+});
