@@ -1,5 +1,5 @@
 import {getChannelCount, bytePosition2Coordinates, coordinates2bytePosition,
-	forEachPixel, forEachByte, blendColor, blendAlpha, hasCoordinates,
+	forEachPixel, forEachByte, blendColor, getAlpha, blendAlpha, hasCoordinates,
 	isRGBA, isEqualColor} from './utils.js';
 import {CHANNEL_RED, CHANNEL_GREEN, CHANNEL_BLUE, CHANNEL_ALPHA,
 	RGB, RGBA} from './constants.js';
@@ -28,7 +28,7 @@ export function createCanvas(
 export function createCanvasFromImageBuffer(
 	imageBuffer: array,
 	width: number,
-	height: number = imageBuffer / (width * 4),
+	height: number,
 	hasAlphaChannel: boolean = true
 ): Canvas {
 	let canvas = createCanvas(width, height, hasAlphaChannel);
@@ -114,7 +114,10 @@ export function drawCanvas(
 	let workingCanvas = cloneCanvas(destination);
 
 	forEachPixel(source, (x, y, bytePos) => {
-		if (!hasCoordinates(destination, x, y)) {
+		if (
+			!hasCoordinates(destination, x + offsetX, y + offsetY) ||
+			getAlpha(getColor(source, x, y)) === 0x00
+		) {
 			return;
 		}
 

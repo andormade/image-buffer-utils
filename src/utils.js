@@ -9,7 +9,7 @@ export function bytePosition2Coordinates(canvas: Canvas, pos: number): array {
 	let byteWidth = canvas.width * getChannelCount(canvas);
 	return [
 		Math.floor(pos / byteWidth),
-		pos % byteWidth / getChannelCount(canvas)
+		Math.floor(pos % byteWidth / getChannelCount(canvas))
 	];
 }
 
