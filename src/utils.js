@@ -63,22 +63,28 @@ export function rgba(color: array): array {
 }
 
 export function blendChannel(
-	color2: number,
-	color1: number,
-	alpha1: number = 0xff,
-	alpha2: number = 0xff
+	dstRGB: number,
+	srcRGB: number,
+	dstA: number = 0xff,
+	srcA: number = 0xff
 ) {
-	return (
-		(
-			(color1 / 255) * (alpha1 / 255)
-		) + (
-			(color2 / 255) * (alpha2 / 255) * (1 - (alpha1 / 255))
-		)
-	) * 255;
+	dstRGB = dstRGB / 0xff;
+	srcRGB = srcRGB / 0xff;
+	let outA = blendAlpha(dstA, srcA) / 0xff;
+	dstA = dstA / 0xff;
+	srcA = srcA / 0xff;
+
+	if (outA === 0) {
+		return dstRGB * 0xff;
+	}
+
+	return ((srcRGB * srcA + dstRGB * dstA * (1 - srcA)) / outA) * 0xff;
 }
 
-export function blendAlpha(alpha1: number, alpha2: number): number {
-	return Math.min(0xff, alpha1 + alpha2);
+export function blendAlpha(dstA: number, srcA: number): number {
+	srcA = srcA / 0xff;
+	dstA = dstA / 0xff;
+	return Math.min(srcA + dstA * (1 - srcA), 1) * 0xff;
 }
 
 export function isRGBA(color: array): boolean {
@@ -87,4 +93,19 @@ export function isRGBA(color: array): boolean {
 
 export function getAlpha(color) {
 	return isRGBA(color) ? color[CHANNEL_ALPHA] : 0xff;
+}
+
+export function hasCoordinates(canvas, x, y) {
+	return x < canvas.width && y < canvas.height;
+}
+
+/**
+ * Compares two colors.
+ */
+export function isEqualColor(color1: array, color2: array): boolean {
+	return (
+		color1[CHANNEL_RED] === color2[CHANNEL_RED] &&
+		color1[CHANNEL_GREEN] === color2[CHANNEL_GREEN] &&
+		color1[CHANNEL_BLUE] === color2[CHANNEL_BLUE]
+	);
 }

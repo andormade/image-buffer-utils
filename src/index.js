@@ -1,6 +1,6 @@
 import {getChannelCount, bytePosition2Coordinates, coordinates2bytePosition,
-	forEachPixel, forEachByte, blendColor, blendAlpha,
-	isRGBA} from './utils.js';
+	forEachPixel, forEachByte, blendColor, blendAlpha, hasCoordinates,
+	isRGBA, isEqualColor} from './utils.js';
 import {CHANNEL_RED, CHANNEL_GREEN, CHANNEL_BLUE, CHANNEL_ALPHA,
 	RGB, RGBA} from './constants.js';
 
@@ -42,17 +42,6 @@ export function createCanvasFromImageBuffer(
 export function cloneCanvas(canvas: Canvas): Canvas {
 	return createCanvasFromImageBuffer(
 		canvas.data, canvas.width, canvas.height, canvas.hasAlphaChannel
-	);
-}
-
-/**
- * Compares two colors.
- */
-export function isEqualColor(color1: array, color2: array): boolean {
-	return (
-		color1[CHANNEL_RED] === color2[CHANNEL_RED] &&
-		color1[CHANNEL_GREEN] === color2[CHANNEL_GREEN] &&
-		color1[CHANNEL_BLUE] === color2[CHANNEL_BLUE]
 	);
 }
 
@@ -125,31 +114,26 @@ export function drawCanvas(
 	let workingCanvas = cloneCanvas(destination);
 
 	forEachPixel(source, (x, y, bytePos) => {
-		let destBytePos = coordinates2bytePosition(destination, x + offsetX, y + offsetY);
-
-		if (typeof destination.data[destBytePos] === 'undefined') {
+		if (!hasCoordinates(destination, x, y)) {
 			return;
 		}
+
+		let destBytePos = coordinates2bytePosition(
+			destination, x + offsetX, y + offsetY
+		),
+			alpha = 0xff;
 
 		[
 			workingCanvas.data[destBytePos + CHANNEL_RED],
 			workingCanvas.data[destBytePos + CHANNEL_GREEN],
-			workingCanvas.data[destBytePos + CHANNEL_BLUE]
-		] = blendColor([
-			destination.data[destBytePos + CHANNEL_RED],
-			destination.data[destBytePos + CHANNEL_GREEN],
-			destination.data[destBytePos + CHANNEL_BLUE]
-		], [
-			source.data[bytePos + CHANNEL_RED],
-			source.data[bytePos + CHANNEL_GREEN],
-			source.data[bytePos + CHANNEL_BLUE]
-		]);
+			workingCanvas.data[destBytePos + CHANNEL_BLUE],
+			alpha
+		] = blendColor(
+			getColor(destination, x, y), getColor(source, x, y)
+		);
 
 		if (destination.hasAlphaChannel && source.hasAlphaChannel) {
-			workingCanvas.data[destBytePos + CHANNEL_ALPHA] = blendAlpha(
-				destination.data[destBytePos + CHANNEL_ALPHA],
-				source.data[bytePos + CHANNEL_ALPHA]
-			);
+			workingCanvas.data[destBytePos + CHANNEL_ALPHA] = alpha;
 		}
 	});
 

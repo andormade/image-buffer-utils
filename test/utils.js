@@ -16,14 +16,23 @@ describe('coordinates2bytePosition', function() {
 	});
 });
 
-describe('mergeAlpha', function() {
+describe('blendAlpha', function() {
 	it('should return with 0x00', function() {
 		assert.strictEqual(utils.blendAlpha(0x00, 0x00), 0x00);
-	})
+	});
 
 	it('should return with 0xff', function() {
 		assert.strictEqual(utils.blendAlpha(0xff, 0x00), 0xff);
 		assert.strictEqual(utils.blendAlpha(0x00, 0xff), 0xff);
 		assert.strictEqual(utils.blendAlpha(0xff, 0xff), 0xff);
-	})
+	});
+});
+
+describe('blendChannel', function() {
+	it('should return with 0xff', function() {
+		assert.strictEqual(utils.blendChannel(0xff, 0xff, 0x00, 0x00), 0xff);
+		assert.strictEqual(utils.blendChannel(0xff, 0xff, 0x00, 0x00), 0xff);
+		assert.strictEqual(utils.blendChannel(0xff, 0xff, 0x00, 0xff), 0xff);
+		assert.strictEqual(utils.blendChannel(0xff, 0xff, 0xff, 0x00), 0xff);
+	});
 });
