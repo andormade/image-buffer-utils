@@ -77,4 +77,17 @@ describe('drawCanvas', function() {
 
 		assert.deepEqual(imageBuffer, canvas.data);
 	});
+
+	it('should draw a red rectangle', function() {
+		let png = PNG.sync.read(fs.readFileSync('./test/images/red_rectangle.png'));
+		let imageBuffer = png.data;
+
+		let canvas3 = funPaint.createCanvasFromImageBuffer(imageBuffer, 16, 32);
+		let canvas4 = funPaint.createCanvas(16, 32);
+		canvas4 = funPaint.drawRect(canvas4, 0, 0, 16, 32, [255, 255, 255, 0]);
+
+		canvas4 = funPaint.drawCanvas(canvas4, canvas3, 0, 0);
+
+		assert.deepEqual(imageBuffer, canvas4.data);
+	});
 });

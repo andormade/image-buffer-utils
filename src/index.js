@@ -1,6 +1,6 @@
-import {getChannelCount, bytePosition2Coordinates, coordinates2bytePosition,
-	forEachPixel, forEachByte, blendColor, getAlpha, blendAlpha, hasCoordinates,
-	isRGBA, isEqualColor} from './utils.js';
+import {getChannelCount, coordinates2bytePosition, forEachPixel, forEachByte,
+	blendColor, getAlpha, blendAlpha, hasCoordinates, isRGBA,
+	isEqualColor} from './utils.js';
 import {CHANNEL_RED, CHANNEL_GREEN, CHANNEL_BLUE, CHANNEL_ALPHA,
 	RGB, RGBA} from './constants.js';
 

@@ -8,8 +8,8 @@ export function getChannelCount(canvas: Canvas): number {
 export function bytePosition2Coordinates(canvas: Canvas, pos: number): array {
 	let byteWidth = canvas.width * getChannelCount(canvas);
 	return [
-		Math.floor(pos / byteWidth),
-		Math.floor(pos % byteWidth / getChannelCount(canvas))
+		Math.floor(pos % byteWidth / getChannelCount(canvas)),
+		Math.floor(pos / byteWidth)
 	];
 }
 

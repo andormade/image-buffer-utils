@@ -4,15 +4,34 @@ var assert = require('assert'),
 	canvas = null;
 
 beforeEach(function() {
-	canvas = funPaint.createCanvas(2, 2);
+	canvas = funPaint.createCanvas(2, 4);
 });
 
 describe('coordinates2bytePosition', function() {
 	it('should return the correct byte position', function() {
-		assert.deepEqual(utils.coordinates2bytePosition(canvas, 0, 0), 0);
-		assert.deepEqual(utils.coordinates2bytePosition(canvas, 1, 0), 4);
-		assert.deepEqual(utils.coordinates2bytePosition(canvas, 0, 1), 8);
-		assert.deepEqual(utils.coordinates2bytePosition(canvas, 1, 1), 12);
+		assert.strictEqual(utils.coordinates2bytePosition(canvas, 0, 0), 0);
+		assert.strictEqual(utils.coordinates2bytePosition(canvas, 1, 0), 4);
+		assert.strictEqual(utils.coordinates2bytePosition(canvas, 0, 1), 8);
+		assert.strictEqual(utils.coordinates2bytePosition(canvas, 1, 1), 12);
+
+		assert.strictEqual(utils.coordinates2bytePosition(canvas, 0, 2), 16);
+		assert.strictEqual(utils.coordinates2bytePosition(canvas, 1, 2), 20);
+		assert.strictEqual(utils.coordinates2bytePosition(canvas, 0, 3), 24);
+		assert.strictEqual(utils.coordinates2bytePosition(canvas, 1, 3), 28);
+	});
+});
+
+describe('bytePosition2Coordinates', function() {
+	it('should return the correct coordinates', function() {
+		assert.deepEqual(utils.bytePosition2Coordinates(canvas, 0), [0, 0]);
+		assert.deepEqual(utils.bytePosition2Coordinates(canvas, 4), [1, 0]);
+		assert.deepEqual(utils.bytePosition2Coordinates(canvas, 8), [0, 1]);
+		assert.deepEqual(utils.bytePosition2Coordinates(canvas, 12), [1, 1]);
+
+		assert.deepEqual(utils.bytePosition2Coordinates(canvas, 16), [0, 2]);
+		assert.deepEqual(utils.bytePosition2Coordinates(canvas, 20), [1, 2]);
+		assert.deepEqual(utils.bytePosition2Coordinates(canvas, 24), [0, 3]);
+		assert.deepEqual(utils.bytePosition2Coordinates(canvas, 28), [1, 3]);
 	});
 });
 
