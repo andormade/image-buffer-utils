@@ -72,24 +72,8 @@ describe('drawCanvas', function() {
 		canvas = funPaint.drawRect(canvas, 0, 0, 16, 16, [255, 255, 255, 0]);
 		canvas = funPaint.drawRect(canvas, 4, 4, 8, 8, [0, 0, 0, 255]);
 
-	//	canvas2 = funPaint.cloneCanvas(canvas);
-
-	canvas2 = funPaint.drawRect(canvas2, 0, 0, 16, 16, [255, 255, 255, 0]);
-	canvas2 = funPaint.drawRect(canvas2, 4, 4, 8, 8, [0, 0, 0, 255]);
-
-
+		canvas2 = funPaint.cloneCanvas(canvas);
 		canvas = funPaint.drawCanvas(canvas, canvas2, 4, 4);
-
-		for (let i = 0; i < imageBuffer.length; i += 4) {
-			if (canvas.data[i] !== imageBuffer[i]) {
-				console.log('diff:', utils.bytePosition2Coordinates(canvas, i),
-					[canvas.data[i], canvas.data[i + 1], canvas.data[i + 2], canvas.data[i + 3]], [imageBuffer[i], imageBuffer[i + 1], imageBuffer[i + 2], imageBuffer[i + 3]]);
-			}
-		}
-
-		png.data = canvas.data;
-		var buffer = PNG.sync.write(png);
-		fs.writeFileSync('out.png', buffer);
 
 		assert.deepEqual(imageBuffer, canvas.data);
 	});
