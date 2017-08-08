@@ -1,6 +1,6 @@
 import {getChannelCount, coordinates2bytePosition, forEachPixel, forEachByte,
-	blendColor, getAlpha, blendAlpha, hasCoordinates, isRGBA,
-	isEqualColor} from './utils.js';
+	blendColor, getAlpha, blendAlpha, hasCoordinates, isRGBA, isEqualColor,
+	hexColorToArray } from './utils.js';
 import {CHANNEL_RED, CHANNEL_GREEN, CHANNEL_BLUE, CHANNEL_ALPHA,
 	RGB, RGBA} from './constants.js';
 
@@ -183,3 +183,5 @@ export function getColor(canvas: Canvas, x: number, y: number): array {
 
 	return color;
 }
+
+export { hexColorToArray };

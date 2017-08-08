@@ -109,3 +109,17 @@ export function isEqualColor(color1: array, color2: array): boolean {
 		color1[CHANNEL_BLUE] === color2[CHANNEL_BLUE]
 	);
 }
+
+export function hexColorToArray(hexColor: string, alpha: number = 1): array {
+	let regex = /#([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})/;
+
+	let red: number, green: number, blue: number;
+	[, red, green, blue] = hexColor.match(regex);
+
+	return [
+		parseInt(red, 16),
+		parseInt(green, 16),
+		parseInt(blue, 16),
+		alpha * 255
+	];
+}

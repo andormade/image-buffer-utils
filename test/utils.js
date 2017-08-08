@@ -82,3 +82,12 @@ describe('blendColor', function() {
 		]);
 	});
 });
+
+describe('hexColorToArray', function() {
+	it('should return the correct values', function() {
+		assert.deepEqual(
+			utils.hexColorToArray('#ffffff'), [0xff, 0xff, 0xff, 0xff]);
+		assert.deepEqual(
+			utils.hexColorToArray('#000000'), [0x00, 0x00, 0x00, 0xff]);
+	});
+});
