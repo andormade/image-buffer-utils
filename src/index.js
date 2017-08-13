@@ -50,24 +50,13 @@ export function cloneCanvas(canvas: Canvas): Canvas {
  */
 export function drawPixel(
 	canvas: Canvas,
-	x: number,
-	y: number,
-	color: array
+	pixelX: number,
+	pixelY: number,
+	pixelColor: array
 ): Canvas {
-	let workingCanvas = cloneCanvas(canvas),
-		bytePos = coordinates2bytePosition(canvas, x, y);
-
-	[
-		workingCanvas.data[bytePos + CHANNEL_RED],
-		workingCanvas.data[bytePos + CHANNEL_GREEN],
-		workingCanvas.data[bytePos + CHANNEL_BLUE]
-	] = color;
-
-	if (color[CHANNEL_ALPHA] && canvas.hasAlphaChannel) {
-		workingCanvas.data[bytePos + CHANNEL_ALPHA] = color[CHANNEL_ALPHA];
-	}
-
-	return workingCanvas;
+	return mapPixels(canvas, (x, y, bytePos, color) => {
+		return (x === pixelX && y === pixelY) ? pixelColor : color;
+	});
 }
 
 /**
@@ -75,31 +64,18 @@ export function drawPixel(
  */
 export function drawRect(
 	canvas: Canvas,
-	x: number,
-	y: number,
+	offsetX: number,
+	offsetY: number,
 	width: number,
 	height: number,
-	color: array
+	rectColor: array
 ): Canvas {
-	let workingCanvas = cloneCanvas(canvas);
-
-	for (let i = x; i < x + width; i++) {
-		for (let j = y; j < y + height; j++) {
-			let bytePos = coordinates2bytePosition(canvas, i, j);
-			[
-				workingCanvas.data[bytePos + CHANNEL_RED],
-				workingCanvas.data[bytePos + CHANNEL_GREEN],
-				workingCanvas.data[bytePos + CHANNEL_BLUE]
-			] = color;
-
-			if (canvas.hasAlphaChannel) {
-				workingCanvas.data[bytePos + CHANNEL_ALPHA] =
-					isRGBA(color) ? color[CHANNEL_ALPHA] : 0xff;
-			}
- 		}
-	}
-
-	return workingCanvas;
+	return mapPixels(canvas, (x, y, bytePos, color) => {
+		return (
+			x >= offsetX && x < width + offsetX &&
+			y >= offsetY && y < height + offsetY
+		) ? rectColor : color;
+	});
 }
 
 /**
@@ -111,32 +87,41 @@ export function drawCanvas(
 	offsetX: number,
 	offsetY: number
 ): Canvas {
-	let workingCanvas = cloneCanvas(destination);
-
-	forEachPixel(source, (x, y, bytePos) => {
+	return mapPixels(destination, (x, y, bytePos, color) => {
 		if (
-			!hasCoordinates(destination, x + offsetX, y + offsetY) ||
-			getAlpha(getColor(source, x, y)) === 0x00
+			x >= offsetX && x < source.width + offsetX &&
+			y >= offsetY && y < source.height + offsetY
 		) {
-			return;
+			return blendColor(
+				getColor(destination, x , y),
+				getColor(source, x - offsetX, y - offsetY)
+			)
 		}
+		else {
+			return color;
+		}
+	});
 
-		let destBytePos = coordinates2bytePosition(
-			destination, x + offsetX, y + offsetY
-		),
-			alpha = 0xff;
+	return workingCanvas;
+}
+
+export function mapPixels(canvas, callback) {
+	let workingCanvas = cloneCanvas(canvas);
+
+	forEachPixel(canvas, (x, y, bytePos) => {
+		let color = callback(x, y, bytePos, getColor(canvas, x, y));
 
 		[
-			workingCanvas.data[destBytePos + CHANNEL_RED],
-			workingCanvas.data[destBytePos + CHANNEL_GREEN],
-			workingCanvas.data[destBytePos + CHANNEL_BLUE],
-			alpha
-		] = blendColor(
-			getColor(destination, x, y), getColor(source, x, y)
-		);
+			workingCanvas.data[bytePos + CHANNEL_RED],
+			workingCanvas.data[bytePos + CHANNEL_GREEN],
+			workingCanvas.data[bytePos + CHANNEL_BLUE]
+		] = color;
 
-		if (destination.hasAlphaChannel && source.hasAlphaChannel) {
-			workingCanvas.data[destBytePos + CHANNEL_ALPHA] = alpha;
+		if (isRGBA(color) && canvas.hasAlphaChannel) {
+			workingCanvas.data[bytePos + CHANNEL_ALPHA] = color[CHANNEL_ALPHA];
+		}
+		else if (!isRGBA(color) && canvas.hasAlphaChannel) {
+			workingCanvas.data[bytePos + CHANNEL_ALPHA] = 0xff;
 		}
 	});
 
@@ -151,19 +136,10 @@ export function replaceColor(
 	replacee: array,
 	replacer: array
 ): Canvas {
-	let workingCanvas = cloneCanvas(canvas);
-
-	forEachPixel(canvas, (x, y, bytePos) => {
-		if (isEqualColor(getColor(canvas, x, y), replacee)) {
-			[
-				workingCanvas.data[bytePos + CHANNEL_RED],
-				workingCanvas.data[bytePos + CHANNEL_GREEN],
-				workingCanvas.data[bytePos + CHANNEL_BLUE]
-			] = replacer;
-		}
+	return mapPixels(canvas, (x, y, bytePos, color) => {
+		return isEqualColor(getColor(canvas, x, y), replacee)
+			? replacer : color;
 	});
-
-	return workingCanvas;
 }
 
 /**
