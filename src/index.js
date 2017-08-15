@@ -101,8 +101,6 @@ export function drawCanvas(
 			return color;
 		}
 	});
-
-	return workingCanvas;
 }
 
 export function mapPixels(canvas, callback) {
