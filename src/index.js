@@ -54,9 +54,9 @@ export function drawPixel(
 	pixelY: number,
 	pixelColor: array
 ): Canvas {
-	return mapPixels(canvas, (x, y, bytePos, color) => {
-		return (x === pixelX && y === pixelY) ? pixelColor : color;
-	});
+	return mapPixels(canvas, (x, y, bytePos, color) => (
+		x === pixelX && y === pixelY ? pixelColor : color
+	));
 }
 
 /**
@@ -70,12 +70,12 @@ export function drawRect(
 	height: number,
 	rectColor: array
 ): Canvas {
-	return mapPixels(canvas, (x, y, bytePos, color) => {
-		return (
+	return mapPixels(canvas, (x, y, bytePos, color) => (
+		(
 			x >= offsetX && x < width + offsetX &&
 			y >= offsetY && y < height + offsetY
-		) ? rectColor : color;
-	});
+		) ? rectColor : color
+	));
 }
 
 /**
@@ -134,10 +134,9 @@ export function replaceColor(
 	replacee: array,
 	replacer: array
 ): Canvas {
-	return mapPixels(canvas, (x, y, bytePos, color) => {
-		return isEqualColor(getColor(canvas, x, y), replacee)
-			? replacer : color;
-	});
+	return mapPixels(canvas, (x, y, bytePos, color) => (
+		isEqualColor(getColor(canvas, x, y), replacee) ? replacer : color
+	));
 }
 
 /**
