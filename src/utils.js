@@ -1,44 +1,39 @@
 import {CHANNEL_RED, CHANNEL_GREEN, CHANNEL_BLUE, CHANNEL_ALPHA,
 	RGB, RGBA} from './constants.js';
 
-export function getChannelCount(canvas: Canvas): number {
-	return canvas.hasAlphaChannel ? RGBA : RGB;
+export function getChannelCount(hasAlpha) {
+	return hasAlpha ? RGBA : RGB;
 }
 
-export function bytePosition2Coordinates(canvas: Canvas, pos: number): array {
-	let byteWidth = canvas.width * getChannelCount(canvas);
+export function bytePosition2Coordinates(width, hasAlpha, pos) {
+	let byteWidth = width * getChannelCount(hasAlpha);
 	return [
-		Math.floor(pos % byteWidth / getChannelCount(canvas)),
+		Math.floor(pos % byteWidth / getChannelCount(hasAlpha)),
 		Math.floor(pos / byteWidth)
 	];
 }
 
-export function coordinates2bytePosition(
-	canvas: Canvas,
-	x: number,
-	y: number
-): number {
-	return (y * canvas.width + x) * getChannelCount(canvas);
+export function coordinates2bytePosition(width, hasAlpha, x, y) {
+	return (y * width + x) * getChannelCount(hasAlpha);
 }
 
-export function forEachPixel(canvas: Canvas, callback: mixed): void {
-	let channelCount = getChannelCount(canvas),
-		length = canvas.data.length;
+export function forEachPixel(buffer, width, hasAlpha, callback) {
+	let channelCount = getChannelCount(hasAlpha);
 
-	for (let bytePos = 0; bytePos < length; bytePos += channelCount) {
-		let [x, y] = bytePosition2Coordinates(canvas, bytePos);
+	for (let bytePos = 0; bytePos < buffer.length; bytePos += channelCount) {
+		let [x, y] = bytePosition2Coordinates(width, hasAlpha, bytePos);
 		callback(x, y, bytePos);
 	}
 }
 
-export function forEachByte(canvas: Canvas, callback: mixed): void {
-	for (let bytePos = 0; bytePos < canvas.data.length; bytePos++) {
-		let [x, y] = bytePosition2Coordinates(canvas, bytePos);
+export function forEachByte(buffer, width, hasAlpha, callback) {
+	for (let bytePos = 0; bytePos < buffer.length; bytePos++) {
+		let [x, y] = bytePosition2Coordinates(width, hasAlpha, bytePos);
 		callback(x, y, bytePos);
 	}
 }
 
-export function blendColor(color1: array, color2: array): array {
+export function blendColor(color1, color2) {
 	let alpha1 = getAlpha(color1),
 		alpha2 = getAlpha(color2);
 
@@ -55,19 +50,14 @@ export function blendColor(color1: array, color2: array): array {
 	return color;
 }
 
-export function rgba(color: array): array {
+export function rgba(color) {
 	let rgbaColor = [...color];
 	rgbaColor[CHANNEL_ALPHA] = color[CHANNEL_ALPHA] ?
 		color[CHANNEL_ALPHA] : 0xff;
 	return rgbaColor;
 }
 
-export function blendChannel(
-	dstRGB: number,
-	srcRGB: number,
-	dstA: number = 0xff,
-	srcA: number = 0xff
-) {
+export function blendChannel(dstRGB, srcRGB, dstA = 0xff, srcA = 0xff) {
 	dstRGB = dstRGB / 0xff;
 	srcRGB = srcRGB / 0xff;
 	let outA = blendAlpha(dstA, srcA) / 0xff;
@@ -81,13 +71,13 @@ export function blendChannel(
 	return ((srcRGB * srcA + dstRGB * dstA * (1 - srcA)) / outA) * 0xff;
 }
 
-export function blendAlpha(dstA: number, srcA: number): number {
+export function blendAlpha(dstA, srcA) {
 	srcA = srcA / 0xff;
 	dstA = dstA / 0xff;
 	return Math.min(srcA + dstA * (1 - srcA), 1) * 0xff;
 }
 
-export function isRGBA(color: array): boolean {
+export function isRGBA(color) {
 	return color.length === 4;
 }
 
@@ -95,14 +85,15 @@ export function getAlpha(color) {
 	return isRGBA(color) ? color[CHANNEL_ALPHA] : 0xff;
 }
 
-export function hasCoordinates(canvas, x, y) {
-	return x < canvas.width && y < canvas.height;
+export function hasCoordinates(buffer, width, hasAlpha, x, y) {
+	let height = getHeight(buffer, width, hasAlpha);
+	return x < width && y < height;
 }
 
 /**
  * Compares two colors.
  */
-export function isEqualColor(color1: array, color2: array): boolean {
+export function isEqualColor(color1, color2) {
 	return (
 		color1[CHANNEL_RED] === color2[CHANNEL_RED] &&
 		color1[CHANNEL_GREEN] === color2[CHANNEL_GREEN] &&
@@ -110,7 +101,7 @@ export function isEqualColor(color1: array, color2: array): boolean {
 	);
 }
 
-export function hexColorToArray(hexColor: string, alpha: number = 1): array {
+export function hexColorToArray(hexColor, alpha = 1) {
 	let regex = /#([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})/,
 		[, red, green, blue] = hexColor.match(regex);
 
@@ -120,4 +111,8 @@ export function hexColorToArray(hexColor: string, alpha: number = 1): array {
 		parseInt(blue, 16),
 		alpha * 255
 	];
+}
+
+export function getHeight(buffer, width, hasAlpha) {
+	return Math.ceil((buffer.length / width) / getChannelCount(hasAlpha));
 }

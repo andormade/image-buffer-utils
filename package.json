@@ -1,6 +1,6 @@
 {
   "name": "functional-paint",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -23,7 +23,6 @@
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-env": "^1.6.0",
-    "babel-preset-flow": "^6.23.0",
     "browserify": "^14.4.0",
     "mocha": "^3.4.2",
     "nyc": "^11.0.3",
