@@ -4,7 +4,7 @@
 
 # functional-paint
 
-This is a JavaScript library for manipulating image buffers with pure functions. It doesn't really make sense to use them for this purpose, you probably won't be able to use this library in a performance-critical project. 
+This is a JavaScript library for manipulating image buffers with pure functions. It's not the most efficient way of doing this, and you probably won't be able to use this library in a performance-critical project. It's just for practicing image processing algorithms and functional programming.  
 
 [npm-svg]: https://img.shields.io/npm/v/functional-paint.svg
 [npm-url]: https://www.npmjs.com/package/functional-paint
