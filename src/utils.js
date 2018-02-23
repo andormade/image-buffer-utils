@@ -1,5 +1,11 @@
-import {CHANNEL_RED, CHANNEL_GREEN, CHANNEL_BLUE, CHANNEL_ALPHA,
-	RGB, RGBA} from './constants.js';
+import {
+	CHANNEL_RED,
+	CHANNEL_GREEN,
+	CHANNEL_BLUE,
+	CHANNEL_ALPHA,
+	RGB,
+	RGBA
+} from './constants.js';
 
 export function getChannelCount(hasAlpha) {
 	return hasAlpha ? RGBA : RGB;
@@ -8,7 +14,7 @@ export function getChannelCount(hasAlpha) {
 export function bytePosition2Coordinates(width, hasAlpha, pos) {
 	let byteWidth = width * getChannelCount(hasAlpha);
 	return [
-		Math.floor(pos % byteWidth / getChannelCount(hasAlpha)),
+		Math.floor((pos % byteWidth) / getChannelCount(hasAlpha)),
 		Math.floor(pos / byteWidth)
 	];
 }
@@ -39,7 +45,12 @@ export function blendColor(color1, color2) {
 
 	let color = [
 		blendChannel(color1[CHANNEL_RED], color2[CHANNEL_RED], alpha1, alpha2),
-		blendChannel(color1[CHANNEL_GREEN], color2[CHANNEL_GREEN], alpha1, alpha2),
+		blendChannel(
+			color1[CHANNEL_GREEN],
+			color2[CHANNEL_GREEN],
+			alpha1,
+			alpha2
+		),
 		blendChannel(color1[CHANNEL_BLUE], color2[CHANNEL_BLUE], alpha1, alpha2)
 	];
 
@@ -52,8 +63,9 @@ export function blendColor(color1, color2) {
 
 export function rgba(color) {
 	let rgbaColor = [...color];
-	rgbaColor[CHANNEL_ALPHA] = color[CHANNEL_ALPHA] ?
-		color[CHANNEL_ALPHA] : 0xff;
+	rgbaColor[CHANNEL_ALPHA] = color[CHANNEL_ALPHA]
+		? color[CHANNEL_ALPHA]
+		: 0xff;
 	return rgbaColor;
 }
 
@@ -68,7 +80,7 @@ export function blendChannel(dstRGB, srcRGB, dstA = 0xff, srcA = 0xff) {
 		return dstRGB * 0xff;
 	}
 
-	return ((srcRGB * srcA + dstRGB * dstA * (1 - srcA)) / outA) * 0xff;
+	return (srcRGB * srcA + dstRGB * dstA * (1 - srcA)) / outA * 0xff;
 }
 
 export function blendAlpha(dstA, srcA) {
@@ -114,5 +126,5 @@ export function hexColorToArray(hexColor, alpha = 1) {
 }
 
 export function getHeight(buffer, width, hasAlpha) {
-	return Math.ceil((buffer.length / width) / getChannelCount(hasAlpha));
+	return Math.ceil(buffer.length / width / getChannelCount(hasAlpha));
 }
