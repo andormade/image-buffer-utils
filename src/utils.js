@@ -2,39 +2,28 @@ import {
 	CHANNEL_RED,
 	CHANNEL_GREEN,
 	CHANNEL_BLUE,
-	CHANNEL_ALPHA,
-	RGB,
-	RGBA
+	CHANNEL_ALPHA
 } from './constants.js';
 
-export function getChannelCount(hasAlpha) {
-	return hasAlpha ? RGBA : RGB;
+export function bytePosition2Coordinates(width, pos) {
+	let byteWidth = width * 4;
+	return [Math.floor((pos % byteWidth) / 4), Math.floor(pos / byteWidth)];
 }
 
-export function bytePosition2Coordinates(width, hasAlpha, pos) {
-	let byteWidth = width * getChannelCount(hasAlpha);
-	return [
-		Math.floor((pos % byteWidth) / getChannelCount(hasAlpha)),
-		Math.floor(pos / byteWidth)
-	];
+export function coordinates2bytePosition(width, x, y) {
+	return (y * width + x) * 4;
 }
 
-export function coordinates2bytePosition(width, hasAlpha, x, y) {
-	return (y * width + x) * getChannelCount(hasAlpha);
-}
-
-export function forEachPixel(buffer, width, hasAlpha, callback) {
-	let channelCount = getChannelCount(hasAlpha);
-
-	for (let bytePos = 0; bytePos < buffer.length; bytePos += channelCount) {
-		let [x, y] = bytePosition2Coordinates(width, hasAlpha, bytePos);
+export function forEachPixel(buffer, width, callback) {
+	for (let bytePos = 0; bytePos < buffer.length; bytePos += 4) {
+		let [x, y] = bytePosition2Coordinates(width, bytePos);
 		callback(x, y, bytePos);
 	}
 }
 
-export function forEachByte(buffer, width, hasAlpha, callback) {
+export function forEachByte(buffer, width, callback) {
 	for (let bytePos = 0; bytePos < buffer.length; bytePos++) {
-		let [x, y] = bytePosition2Coordinates(width, hasAlpha, bytePos);
+		let [x, y] = bytePosition2Coordinates(width, bytePos);
 		callback(x, y, bytePos);
 	}
 }
@@ -54,19 +43,9 @@ export function blendColor(color1, color2) {
 		blendChannel(color1[CHANNEL_BLUE], color2[CHANNEL_BLUE], alpha1, alpha2)
 	];
 
-	if (isRGBA(color1)) {
-		color[CHANNEL_ALPHA] = blendAlpha(alpha1, alpha2);
-	}
+	color[CHANNEL_ALPHA] = blendAlpha(alpha1, alpha2);
 
 	return color;
-}
-
-export function rgba(color) {
-	let rgbaColor = [...color];
-	rgbaColor[CHANNEL_ALPHA] = color[CHANNEL_ALPHA]
-		? color[CHANNEL_ALPHA]
-		: 0xff;
-	return rgbaColor;
 }
 
 export function blendChannel(dstRGB, srcRGB, dstA = 0xff, srcA = 0xff) {
@@ -89,16 +68,12 @@ export function blendAlpha(dstA, srcA) {
 	return Math.min(srcA + dstA * (1 - srcA), 1) * 0xff;
 }
 
-export function isRGBA(color) {
-	return color.length === 4;
-}
-
 export function getAlpha(color) {
-	return isRGBA(color) ? color[CHANNEL_ALPHA] : 0xff;
+	return color[CHANNEL_ALPHA];
 }
 
-export function hasCoordinates(buffer, width, hasAlpha, x, y) {
-	let height = getHeight(buffer, width, hasAlpha);
+export function hasCoordinates(buffer, width, x, y) {
+	let height = getHeight(buffer, width);
 	return x < width && y < height;
 }
 
@@ -125,6 +100,6 @@ export function hexColorToArray(hexColor, alpha = 1) {
 	];
 }
 
-export function getHeight(buffer, width, hasAlpha) {
-	return Math.ceil(buffer.length / width / getChannelCount(hasAlpha));
+export function getHeight(buffer, width) {
+	return Math.ceil(buffer.length / width / 4);
 }

@@ -17,28 +17,14 @@ describe('drawCanvas', function() {
 			fs.readFileSync('./test/images/white.png')
 		).data;
 
-		canvas = funPaint.drawRect(canvas, width, true, 0, 0, 16, 16, [
-			0,
-			0,
-			0,
-			0
-		]);
-		canvas2 = funPaint.drawRect(canvas2, width, true, 0, 0, 16, 16, [
+		canvas = funPaint.drawRect(canvas, width, 0, 0, 16, 16, [0, 0, 0, 0]);
+		canvas2 = funPaint.drawRect(canvas2, width, 0, 0, 16, 16, [
 			0xff,
 			0xff,
 			0xff,
 			0xff
 		]);
-		canvas = funPaint.drawBuffer(
-			canvas,
-			width,
-			true,
-			canvas2,
-			width,
-			true,
-			0,
-			0
-		);
+		canvas = funPaint.drawBuffer(canvas, width, canvas2, width, 0, 0);
 		assert.deepEqual(imageBuffer, canvas);
 	});
 
@@ -47,28 +33,19 @@ describe('drawCanvas', function() {
 			fs.readFileSync('./test/images/white.png')
 		).data;
 
-		canvas = funPaint.drawRect(canvas, width, true, 0, 0, 16, 16, [
+		canvas = funPaint.drawRect(canvas, width, 0, 0, 16, 16, [
 			0xff,
 			0xff,
 			0xff,
 			0xff
 		]);
-		canvas2 = funPaint.drawRect(canvas2, width, true, 0, 0, 16, 16, [
+		canvas2 = funPaint.drawRect(canvas2, width, 0, 0, 16, 16, [
 			0xff,
 			0xff,
 			0xff,
 			0
 		]);
-		canvas = funPaint.drawBuffer(
-			canvas,
-			width,
-			true,
-			canvas2,
-			width,
-			true,
-			0,
-			0
-		);
+		canvas = funPaint.drawBuffer(canvas, width, canvas2, width, 0, 0);
 		assert.deepEqual(imageBuffer, canvas);
 	});
 
@@ -77,36 +54,22 @@ describe('drawCanvas', function() {
 			fs.readFileSync('./test/images/black_square.png')
 		).data;
 
-		canvas = funPaint.drawRect(canvas, width, true, 0, 0, 16, 16, [
+		canvas = funPaint.drawRect(canvas, width, 0, 0, 16, 16, [
 			255,
 			255,
 			255,
 			0
 		]);
-		canvas = funPaint.drawRect(canvas, width, true, 4, 4, 8, 8, [
-			0,
-			0,
-			0,
-			255
-		]);
+		canvas = funPaint.drawRect(canvas, width, 4, 4, 8, 8, [0, 0, 0, 255]);
 
-		canvas2 = funPaint.drawRect(canvas2, width, true, 0, 0, 16, 16, [
+		canvas2 = funPaint.drawRect(canvas2, width, 0, 0, 16, 16, [
 			0xff,
 			0xff,
 			0xff,
 			0
 		]);
 
-		canvas = funPaint.drawBuffer(
-			canvas,
-			width,
-			true,
-			canvas2,
-			width,
-			true,
-			0,
-			0
-		);
+		canvas = funPaint.drawBuffer(canvas, width, canvas2, width, 0, 0);
 
 		assert.deepEqual(imageBuffer, canvas);
 	});
@@ -116,29 +79,15 @@ describe('drawCanvas', function() {
 			fs.readFileSync('./test/images/black_square.png')
 		).data;
 
-		canvas = funPaint.drawRect(canvas, width, true, 0, 0, 16, 16, [
+		canvas = funPaint.drawRect(canvas, width, 0, 0, 16, 16, [
 			255,
 			255,
 			255,
 			0
 		]);
 		let canvas3 = funPaint.createImageBuffer(8, 8);
-		canvas3 = funPaint.drawRect(canvas3, 8, true, 0, 0, 8, 8, [
-			0,
-			0,
-			0,
-			255
-		]);
-		canvas = funPaint.drawBuffer(
-			canvas,
-			width,
-			true,
-			canvas3,
-			8,
-			true,
-			4,
-			4
-		);
+		canvas3 = funPaint.drawRect(canvas3, 8, 0, 0, 8, 8, [0, 0, 0, 255]);
+		canvas = funPaint.drawBuffer(canvas, width, canvas3, 8, 4, 4);
 
 		assert.deepEqual(imageBuffer, canvas);
 	});
@@ -148,39 +97,16 @@ describe('drawCanvas', function() {
 			fs.readFileSync('./test/images/overlapping_squares_2.png')
 		).data;
 
-		canvas = funPaint.drawRect(canvas, width, true, 0, 0, 16, 16, [
+		canvas = funPaint.drawRect(canvas, width, 0, 0, 16, 16, [
 			255,
 			255,
 			255,
 			0
 		]);
 		let canvas3 = funPaint.createImageBuffer(8, 8);
-		canvas3 = funPaint.drawRect(canvas3, 8, true, 0, 0, 8, 8, [
-			0,
-			0,
-			0,
-			255
-		]);
-		canvas = funPaint.drawBuffer(
-			canvas,
-			width,
-			true,
-			canvas3,
-			8,
-			true,
-			4,
-			4
-		);
-		canvas = funPaint.drawBuffer(
-			canvas,
-			width,
-			true,
-			canvas3,
-			8,
-			true,
-			8,
-			8
-		);
+		canvas3 = funPaint.drawRect(canvas3, 8, 0, 0, 8, 8, [0, 0, 0, 255]);
+		canvas = funPaint.drawBuffer(canvas, width, canvas3, 8, 4, 4);
+		canvas = funPaint.drawBuffer(canvas, width, canvas3, 8, 8, 8);
 
 		assert.deepEqual(imageBuffer, canvas);
 	});
@@ -191,30 +117,16 @@ describe('drawCanvas', function() {
 		);
 		let imageBuffer = png.data;
 
-		canvas = funPaint.drawRect(canvas, width, true, 0, 0, 16, 16, [
+		canvas = funPaint.drawRect(canvas, width, 0, 0, 16, 16, [
 			255,
 			255,
 			255,
 			0
 		]);
-		canvas = funPaint.drawRect(canvas, width, true, 4, 4, 8, 8, [
-			0,
-			0,
-			0,
-			255
-		]);
+		canvas = funPaint.drawRect(canvas, width, 4, 4, 8, 8, [0, 0, 0, 255]);
 
 		canvas2 = [...canvas];
-		canvas = funPaint.drawBuffer(
-			canvas,
-			width,
-			true,
-			canvas2,
-			width,
-			true,
-			4,
-			4
-		);
+		canvas = funPaint.drawBuffer(canvas, width, canvas2, width, 4, 4);
 
 		assert.deepEqual(imageBuffer, canvas);
 	});
@@ -226,23 +138,14 @@ describe('drawCanvas', function() {
 		let imageBuffer = png.data;
 
 		let canvas4 = funPaint.createImageBuffer(16, 32);
-		canvas4 = funPaint.drawRect(canvas4, width, true, 0, 0, 16, 32, [
+		canvas4 = funPaint.drawRect(canvas4, width, 0, 0, 16, 32, [
 			255,
 			255,
 			255,
 			0
 		]);
 
-		canvas4 = funPaint.drawBuffer(
-			canvas4,
-			width,
-			true,
-			imageBuffer,
-			width,
-			true,
-			0,
-			0
-		);
+		canvas4 = funPaint.drawBuffer(canvas4, width, imageBuffer, width, 0, 0);
 
 		assert.deepEqual(imageBuffer, canvas4);
 	});

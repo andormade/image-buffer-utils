@@ -14,7 +14,7 @@ describe('drawRect', function() {
 		let imageBuffer = PNG.sync.read(
 			fs.readFileSync('./test/images/transparent.png')
 		).data;
-		buffer = funPaint.drawRect(buffer, width, true, 0, 0, 16, 16, [
+		buffer = funPaint.drawRect(buffer, width, 0, 0, 16, 16, [
 			255,
 			255,
 			255,
@@ -28,7 +28,7 @@ describe('drawRect', function() {
 		let imageBuffer = PNG.sync.read(
 			fs.readFileSync('./test/images/white.png')
 		).data;
-		buffer = funPaint.drawRect(buffer, width, true, 0, 0, 16, 16, [
+		buffer = funPaint.drawRect(buffer, width, 0, 0, 16, 16, [
 			255,
 			255,
 			255,
@@ -41,18 +41,13 @@ describe('drawRect', function() {
 		let imageBuffer = PNG.sync.read(
 			fs.readFileSync('./test/images/black_square.png')
 		).data;
-		buffer = funPaint.drawRect(buffer, width, true, 0, 0, 16, 16, [
+		buffer = funPaint.drawRect(buffer, width, 0, 0, 16, 16, [
 			255,
 			255,
 			255,
 			0
 		]);
-		buffer = funPaint.drawRect(buffer, width, true, 4, 4, 8, 8, [
-			0,
-			0,
-			0,
-			255
-		]);
+		buffer = funPaint.drawRect(buffer, width, 4, 4, 8, 8, [0, 0, 0, 255]);
 		assert.deepEqual(imageBuffer, buffer);
 	});
 
@@ -60,24 +55,14 @@ describe('drawRect', function() {
 		let imageBuffer = PNG.sync.read(
 			fs.readFileSync('./test/images/overlapping_squares_2.png')
 		).data;
-		buffer = funPaint.drawRect(buffer, width, true, 0, 0, 16, 16, [
+		buffer = funPaint.drawRect(buffer, width, 0, 0, 16, 16, [
 			255,
 			255,
 			255,
 			0
 		]);
-		buffer = funPaint.drawRect(buffer, width, true, 4, 4, 8, 8, [
-			0,
-			0,
-			0,
-			255
-		]);
-		buffer = funPaint.drawRect(buffer, width, true, 8, 8, 8, 8, [
-			0,
-			0,
-			0,
-			255
-		]);
+		buffer = funPaint.drawRect(buffer, width, 4, 4, 8, 8, [0, 0, 0, 255]);
+		buffer = funPaint.drawRect(buffer, width, 8, 8, 8, 8, [0, 0, 0, 255]);
 		assert.deepEqual(imageBuffer, buffer);
 	});
 
@@ -85,30 +70,15 @@ describe('drawRect', function() {
 		let imageBuffer = PNG.sync.read(
 			fs.readFileSync('./test/images/rgb_squares.png')
 		).data;
-		buffer = funPaint.drawRect(buffer, width, true, 0, 0, 16, 16, [
+		buffer = funPaint.drawRect(buffer, width, 0, 0, 16, 16, [
 			255,
 			255,
 			255,
 			0
 		]);
-		buffer = funPaint.drawRect(buffer, width, true, 0, 0, 8, 8, [
-			255,
-			0,
-			0,
-			255
-		]);
-		buffer = funPaint.drawRect(buffer, width, true, 0, 8, 8, 8, [
-			0,
-			255,
-			0,
-			255
-		]);
-		buffer = funPaint.drawRect(buffer, width, true, 8, 8, 8, 8, [
-			0,
-			0,
-			255,
-			255
-		]);
+		buffer = funPaint.drawRect(buffer, width, 0, 0, 8, 8, [255, 0, 0, 255]);
+		buffer = funPaint.drawRect(buffer, width, 0, 8, 8, 8, [0, 255, 0, 255]);
+		buffer = funPaint.drawRect(buffer, width, 8, 8, 8, 8, [0, 0, 255, 255]);
 		assert.deepEqual(imageBuffer, buffer);
 	});
 
@@ -116,54 +86,44 @@ describe('drawRect', function() {
 		let imageBuffer = PNG.sync.read(
 			fs.readFileSync('./test/images/overlapping_squares.png')
 		).data;
-		buffer = funPaint.drawRect(buffer, width, true, 0, 0, 16, 16, [
+		buffer = funPaint.drawRect(buffer, width, 0, 0, 16, 16, [
 			0,
 			0,
 			255,
 			255
 		]);
-		buffer = funPaint.drawRect(buffer, width, true, 1, 1, 14, 14, [
+		buffer = funPaint.drawRect(buffer, width, 1, 1, 14, 14, [
 			255,
 			255,
 			255,
 			255
 		]);
-		buffer = funPaint.drawRect(buffer, width, true, 2, 2, 12, 12, [
+		buffer = funPaint.drawRect(buffer, width, 2, 2, 12, 12, [
 			255,
 			0,
 			0,
 			255
 		]);
-		buffer = funPaint.drawRect(buffer, width, true, 3, 3, 10, 10, [
+		buffer = funPaint.drawRect(buffer, width, 3, 3, 10, 10, [
 			255,
 			255,
 			0,
 			255
 		]);
-		buffer = funPaint.drawRect(buffer, width, true, 4, 4, 8, 8, [
-			0,
-			255,
-			0,
-			255
-		]);
-		buffer = funPaint.drawRect(buffer, width, true, 5, 5, 6, 6, [
+		buffer = funPaint.drawRect(buffer, width, 4, 4, 8, 8, [0, 255, 0, 255]);
+		buffer = funPaint.drawRect(buffer, width, 5, 5, 6, 6, [
 			0,
 			255,
 			255,
 			255
 		]);
-		buffer = funPaint.drawRect(buffer, width, true, 6, 6, 4, 4, [
+		buffer = funPaint.drawRect(buffer, width, 6, 6, 4, 4, [
 			255,
 			0,
 			255,
 			255
 		]);
-		buffer = funPaint.drawRect(buffer, width, true, 7, 7, 2, 2, [
-			0,
-			0,
-			0,
-			255
-		]);
+		buffer = funPaint.drawRect(buffer, width, 7, 7, 2, 2, [0, 0, 0, 255]);
 		assert.deepEqual(imageBuffer, buffer);
 	});
 });

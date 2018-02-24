@@ -4,10 +4,8 @@ import {
 	forEachPixel,
 	forEachByte,
 	blendColor,
-	getAlpha,
 	blendAlpha,
 	hasCoordinates,
-	isRGBA,
 	isEqualColor,
 	hexColorToArray,
 	getHeight
@@ -16,27 +14,23 @@ import {
 	CHANNEL_RED,
 	CHANNEL_GREEN,
 	CHANNEL_BLUE,
-	CHANNEL_ALPHA,
-	RGB,
-	RGBA
+	CHANNEL_ALPHA
 } from './constants.js';
 
 /**
  * Creates a new empty canvas.
  */
-export function createImageBuffer(width, height, hasAlpha = true) {
-	const channels = getChannelCount(hasAlpha);
-	return new Uint8Array(width * height * channels).fill(0x00);
+export function createImageBuffer(width, height) {
+	return new Uint8Array(width * height * 4).fill(0x00);
 }
 
 /**
  * Sets one pixels color on the canvas.
  */
-export function drawPixel(buffer, width, hasAlpha, pixelX, pixelY, pixelColor) {
+export function drawPixel(buffer, width, pixelX, pixelY, pixelColor) {
 	return mapPixels(
 		buffer,
 		width,
-		hasAlpha,
 		(x, y, bytePos, color) =>
 			x === pixelX && y === pixelY ? pixelColor : color
 	);
@@ -48,7 +42,6 @@ export function drawPixel(buffer, width, hasAlpha, pixelX, pixelY, pixelColor) {
 export function drawRect(
 	buffer,
 	imgWidth,
-	hasAlpha,
 	offsetX,
 	offsetY,
 	width,
@@ -58,7 +51,6 @@ export function drawRect(
 	return mapPixels(
 		buffer,
 		imgWidth,
-		hasAlpha,
 		(x, y, bytePos, color) =>
 			x >= offsetX &&
 			x < width + offsetX &&
@@ -75,65 +67,42 @@ export function drawRect(
 export function drawBuffer(
 	destination,
 	destWidth,
-	destHasAlpha,
 	source,
 	srcWidth,
-	srcHasAlpha,
 	offsetX,
 	offsetY
 ) {
-	return mapPixels(
-		destination,
-		destWidth,
-		destHasAlpha,
-		(x, y, bytePos, color) => {
-			const srcHeight = getHeight(source, srcWidth, srcHasAlpha);
-			if (
-				x >= offsetX &&
-				x < srcWidth + offsetX &&
-				y >= offsetY &&
-				y < srcHeight + offsetY
-			) {
-				return blendColor(
-					getColor(destination, destWidth, destHasAlpha, x, y),
-					getColor(
-						source,
-						srcWidth,
-						srcHasAlpha,
-						x - offsetX,
-						y - offsetY
-					)
-				);
-			} else {
-				return color;
-			}
+	return mapPixels(destination, destWidth, (x, y, bytePos, color) => {
+		const srcHeight = getHeight(source, srcWidth);
+		if (
+			x >= offsetX &&
+			x < srcWidth + offsetX &&
+			y >= offsetY &&
+			y < srcHeight + offsetY
+		) {
+			return blendColor(
+				getColor(destination, destWidth, x, y),
+				getColor(source, srcWidth, x - offsetX, y - offsetY)
+			);
+		} else {
+			return color;
 		}
-	);
+	});
 }
 
-export function mapPixels(buffer, width, hasAlpha, callback) {
-	const height = getHeight(buffer, width, hasAlpha);
-	let workingBuffer = createImageBuffer(width, height, hasAlpha);
+export function mapPixels(buffer, width, callback) {
+	const height = getHeight(buffer, width);
+	let workingBuffer = createImageBuffer(width, height);
 
-	forEachPixel(buffer, width, hasAlpha, (x, y, bytePos) => {
-		let color = callback(
-			x,
-			y,
-			bytePos,
-			getColor(buffer, width, hasAlpha, x, y)
-		);
+	forEachPixel(buffer, width, (x, y, bytePos) => {
+		let color = callback(x, y, bytePos, getColor(buffer, width, x, y));
 
 		[
 			workingBuffer[bytePos + CHANNEL_RED],
 			workingBuffer[bytePos + CHANNEL_GREEN],
-			workingBuffer[bytePos + CHANNEL_BLUE]
+			workingBuffer[bytePos + CHANNEL_BLUE],
+			workingBuffer[bytePos + CHANNEL_ALPHA]
 		] = color;
-
-		if (isRGBA(color) && hasAlpha) {
-			workingBuffer[bytePos + CHANNEL_ALPHA] = color[CHANNEL_ALPHA];
-		} else if (!isRGBA(color) && hasAlpha) {
-			workingBuffer[bytePos + CHANNEL_ALPHA] = 0xff;
-		}
 	});
 
 	return workingBuffer;
@@ -142,13 +111,12 @@ export function mapPixels(buffer, width, hasAlpha, callback) {
 /**
  * Replaces the specified color on the canvas.
  */
-export function replaceColor(buffer, width, hasAlpha, x, y) {
+export function replaceColor(buffer, width, x, y) {
 	return mapPixels(
 		buffer,
 		width,
-		hasAlpha,
 		(x, y, bytePos, color) =>
-			isEqualColor(getColor(buffer, width, hasAlpha, x, y), replacee)
+			isEqualColor(getColor(buffer, width, x, y), replacee)
 				? replacer
 				: color
 	);
@@ -157,19 +125,15 @@ export function replaceColor(buffer, width, hasAlpha, x, y) {
 /**
  * Returns with the color of the specified coordinates.
  */
-export function getColor(buffer, width, hasAlpha, x, y) {
-	const bytePos = coordinates2bytePosition(width, hasAlpha, x, y);
-	let color = [
+export function getColor(buffer, width, x, y) {
+	const bytePos = coordinates2bytePosition(width, x, y);
+
+	return [
 		buffer[bytePos + CHANNEL_RED],
 		buffer[bytePos + CHANNEL_GREEN],
-		buffer[bytePos + CHANNEL_BLUE]
+		buffer[bytePos + CHANNEL_BLUE],
+		buffer[bytePos + CHANNEL_ALPHA]
 	];
-
-	if (hasAlpha) {
-		color[CHANNEL_ALPHA] = buffer[bytePos + CHANNEL_ALPHA];
-	}
-
-	return color;
 }
 
 export { hexColorToArray };

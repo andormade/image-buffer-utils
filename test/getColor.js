@@ -9,19 +9,19 @@ describe('getColor', function() {
 		let buffer = PNG.sync.read(fs.readFileSync('./test/images/white.png'))
 			.data;
 
-		assert.deepEqual(funPaint.getColor(buffer, width, true, 0, 0), [
+		assert.deepEqual(funPaint.getColor(buffer, width, 0, 0), [
 			0xff,
 			0xff,
 			0xff,
 			0xff
 		]);
-		assert.deepEqual(funPaint.getColor(buffer, width, true, 8, 8), [
+		assert.deepEqual(funPaint.getColor(buffer, width, 8, 8), [
 			0xff,
 			0xff,
 			0xff,
 			0xff
 		]);
-		assert.deepEqual(funPaint.getColor(buffer, width, true, 15, 15), [
+		assert.deepEqual(funPaint.getColor(buffer, width, 15, 15), [
 			0xff,
 			0xff,
 			0xff,
@@ -34,19 +34,19 @@ describe('getColor', function() {
 			fs.readFileSync('./test/images/transparent.png')
 		).data;
 
-		assert.deepEqual(funPaint.getColor(buffer, width, true, 0, 0), [
+		assert.deepEqual(funPaint.getColor(buffer, width, 0, 0), [
 			0xff,
 			0xff,
 			0xff,
 			0x00
 		]);
-		assert.deepEqual(funPaint.getColor(buffer, width, true, 8, 8), [
+		assert.deepEqual(funPaint.getColor(buffer, width, 8, 8), [
 			0xff,
 			0xff,
 			0xff,
 			0x00
 		]);
-		assert.deepEqual(funPaint.getColor(buffer, width, true, 15, 15), [
+		assert.deepEqual(funPaint.getColor(buffer, width, 15, 15), [
 			0xff,
 			0xff,
 			0xff,
@@ -59,7 +59,7 @@ describe('getColor', function() {
 			fs.readFileSync('./test/images/black_square.png')
 		).data;
 
-		assert.deepEqual(funPaint.getColor(buffer, width, true, 8, 8), [
+		assert.deepEqual(funPaint.getColor(buffer, width, 8, 8), [
 			0x00,
 			0x00,
 			0x00,
@@ -72,7 +72,7 @@ describe('getColor', function() {
 			fs.readFileSync('./test/images/black_square.png')
 		).data;
 
-		assert.deepEqual(funPaint.getColor(buffer, width, true, 0, 0), [
+		assert.deepEqual(funPaint.getColor(buffer, width, 0, 0), [
 			0xff,
 			0xff,
 			0xff,
