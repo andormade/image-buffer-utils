@@ -16,26 +16,24 @@ const {
 /**
  * Creates a new empty canvas.
  */
-const createImageBuffer = function(width, height) {
-	return new Uint8Array(width * height * 4).fill(0x00);
-};
+const createImageBuffer = (width, height) =>
+	new Uint8Array(width * height * 4).fill(0x00);
 
 /**
  * Sets one pixels color on the canvas.
  */
-const drawPixel = function(buffer, width, pixelX, pixelY, pixelColor) {
-	return mapPixels(
+const drawPixel = (buffer, width, pixelX, pixelY, pixelColor) =>
+	mapPixels(
 		buffer,
 		width,
 		(x, y, bytePos, color) =>
 			x === pixelX && y === pixelY ? pixelColor : color
 	);
-};
 
 /**
  * Draws a rectangle.
  */
-const drawRect = function(
+const drawRect = (
 	buffer,
 	imgWidth,
 	offsetX,
@@ -43,8 +41,8 @@ const drawRect = function(
 	width,
 	height,
 	rectColor
-) {
-	return mapPixels(
+) =>
+	mapPixels(
 		buffer,
 		imgWidth,
 		(x, y, bytePos, color) =>
@@ -55,20 +53,19 @@ const drawRect = function(
 				? rectColor
 				: color
 	);
-};
 
 /**
  * Draws a canvas on another canvas.
  */
-const drawBuffer = function(
+const drawBuffer = (
 	destination,
 	destWidth,
 	source,
 	srcWidth,
 	offsetX,
 	offsetY
-) {
-	return mapPixels(destination, destWidth, (x, y, bytePos, color) => {
+) =>
+	mapPixels(destination, destWidth, (x, y, bytePos, color) => {
 		const srcHeight = getHeight(source, srcWidth);
 		if (
 			x >= offsetX &&
@@ -84,14 +81,13 @@ const drawBuffer = function(
 			return color;
 		}
 	});
-};
 
 const mapPixels = function(buffer, width, callback) {
 	const height = getHeight(buffer, width);
-	let workingBuffer = createImageBuffer(width, height);
+	const workingBuffer = createImageBuffer(width, height);
 
 	forEachPixel(buffer, width, (x, y, bytePos) => {
-		let color = callback(x, y, bytePos, getColor(buffer, width, x, y));
+		const color = callback(x, y, bytePos, getColor(buffer, width, x, y));
 
 		[
 			workingBuffer[bytePos + CHANNEL_RED],

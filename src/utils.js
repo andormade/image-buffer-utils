@@ -48,9 +48,7 @@ const blendChannel = function(dstRGB, srcRGB, dstA = 0xff, srcA = 0xff) {
 	return ((srcRGB * srcA + dstRGB * dstA * (1 - srcA)) / outA) * 0xff;
 };
 
-const getAlpha = function(color) {
-	return color[CHANNEL_ALPHA];
-};
+const getAlpha = color => color[CHANNEL_ALPHA];
 
 const blendColor = function(color1, color2) {
 	let alpha1 = getAlpha(color1),
@@ -85,13 +83,10 @@ const hasCoordinates = function(buffer, width, x, y) {
 /**
  * Compares two colors.
  */
-const isEqualColor = function(color1, color2) {
-	return (
-		color1[CHANNEL_RED] === color2[CHANNEL_RED] &&
-		color1[CHANNEL_GREEN] === color2[CHANNEL_GREEN] &&
-		color1[CHANNEL_BLUE] === color2[CHANNEL_BLUE]
-	);
-};
+const isEqualColor = (color1, color2) =>
+	color1[CHANNEL_RED] === color2[CHANNEL_RED] &&
+	color1[CHANNEL_GREEN] === color2[CHANNEL_GREEN] &&
+	color1[CHANNEL_BLUE] === color2[CHANNEL_BLUE];
 
 const hexColorToArray = function(hexColor, alpha = 1) {
 	let regex = /#([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})/,
@@ -105,9 +100,7 @@ const hexColorToArray = function(hexColor, alpha = 1) {
 	];
 };
 
-const getHeight = function(buffer, width) {
-	return Math.ceil(buffer.length / width / 4);
-};
+const getHeight = (buffer, width) => Math.ceil(buffer.length / width / 4);
 
 module.exports = {
 	getHeight,
