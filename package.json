@@ -1,6 +1,6 @@
 {
   "name": "functional-paint",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "",
   "main": "dist/index.js",
   "engines": {
@@ -23,9 +23,8 @@
   },
   "homepage": "https://github.com/andormade/functional-paint#readme",
   "devDependencies": {
-    "mocha": "^5.0.1",
-    "nyc": "^11.0.3",
-    "pngjs": "^3.3.2",
-    "prettier": "^1.10.2"
+    "mocha": "^5.2.0",
+    "pngjs": "^3.3.3",
+    "prettier": "^1.13.7"
   }
 }
