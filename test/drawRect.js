@@ -1,5 +1,5 @@
 var assert = require('assert'),
-	funPaint = require('../dist/index.js'),
+	funPaint = require('../src/index.js'),
 	canvas = null,
 	fs = require('fs'),
 	PNG = require('pngjs').PNG,

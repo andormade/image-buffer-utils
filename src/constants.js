@@ -1,4 +1,11 @@
-export const CHANNEL_RED = 0;
-export const CHANNEL_GREEN = 1;
-export const CHANNEL_BLUE = 2;
-export const CHANNEL_ALPHA = 3;
+const CHANNEL_RED = 0;
+const CHANNEL_GREEN = 1;
+const CHANNEL_BLUE = 2;
+const CHANNEL_ALPHA = 3;
+
+module.exports = {
+	CHANNEL_RED,
+	CHANNEL_GREEN,
+	CHANNEL_BLUE,
+	CHANNEL_ALPHA,
+};

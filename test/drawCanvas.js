@@ -1,6 +1,6 @@
 var assert = require('assert'),
-	funPaint = require('../dist/index.js'),
-	utils = require('../dist/utils.js'),
+	funPaint = require('../src/index.js'),
+	utils = require('../src/utils.js'),
 	canvasa = (canvasb = null),
 	fs = require('fs'),
 	width = 16;
