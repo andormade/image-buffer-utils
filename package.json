@@ -1,5 +1,5 @@
 {
-  "name": "functional-paint",
+  "name": "image-buffer-utils",
   "version": "0.3.3",
   "description": "",
   "main": "src/index.js",
@@ -9,22 +9,26 @@
   },
   "scripts": {
     "prepare": "npm run test",
-    "test": "mocha",
+    "test": "nyc mocha",
     "prettier": "./node_modules/.bin/prettier --write 'src/**/*.js'"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/andormade/functional-paint.git"
+    "url": "git+https://github.com/andormade/image-buffer-utils.git"
   },
   "author": "Andor Polgar",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/andormade/functional-paint/issues"
+    "url": "https://github.com/andormade/image-buffer-utils/issues"
   },
-  "homepage": "https://github.com/andormade/functional-paint#readme",
+  "homepage": "https://github.com/andormade/image-buffer-utils#readme",
   "devDependencies": {
     "mocha": "^5.2.0",
     "pngjs": "^3.3.3",
     "prettier": "^1.13.7"
+  },
+  "dependencies": {
+    "nyc": "^13.1.0",
+    "sinon": "^7.1.1"
   }
 }
