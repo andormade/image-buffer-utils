@@ -1,11 +1,13 @@
 const forEachPixel = require('./forEachPixel');
-const getImageHeight = require('./getImageHeight');
+const getHeight = require('./getHeight');
 const getPixelCoordinatesFromBytePosition = require('./getPixelCoordinatesFromBytePosition');
 const getPixelDataFromBytePosition = require('./getPixelDataFromBytePosition');
+const crop = require('./crop');
 
 module.exports = {
 	forEachPixel,
-	getImageHeight,
+	getHeight,
 	getPixelCoordinatesFromBytePosition,
 	getPixelDataFromBytePosition,
+	crop,
 };
